@@ -67,7 +67,7 @@ def index():
 
         return render_template('index.html', **ctx)
     else:
-        return Abort(400)
+        return abort(400)
 
 @app.route('/<key>/', methods=['GET'])
 def redirect_view(key):
@@ -100,7 +100,6 @@ class url_shortener_cache_Test(TestCase):
         root = ET.fromstring(response.get_data().decode("utf-8").replace("<!DOCTYPE html>",""))
 
         csrf = root.find(".//*input[@name='_csrf_token']").attrib['value']
-
         response = self.app.post('/', data={'url': 'http://example.com/',
                                             '_csrf_token': csrf})
         self.assertEqual(response.status_code, 200)
