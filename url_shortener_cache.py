@@ -88,9 +88,28 @@ class url_shortener_cache_Test(TestCase):
         self.app.testing = True
 
     def test_index_get(self):
-        response = self.app.get('/')
-        self.assertEqual(response.status_code, 200)
-        #self.assertTemplateUsed(response, 'index.html')
+        from flask import template_rendered
+        from contextlib import contextmanager
+
+        @contextmanager
+        def captured_templates(app):
+            recorded = []
+
+            def record(sender, template, context, **extra):
+                recorded.append((template, context))
+
+            template_rendered.connect(record, app)
+            try:
+                yield recorded
+            finally:
+                template_rendered.disconnect(record, app)
+
+        with captured_templates(app) as templates:
+            rv = app.test_client().get('/')
+            assert rv.status_code == 200
+            assert len(templates) == 1
+            template, context = templates[0]
+            assert template.name == 'index.html'
 
     def test_index_post(self):
         from xml.etree import cElementTree as ET
