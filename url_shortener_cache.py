@@ -79,16 +79,13 @@ class url_shortener_cache_Test(TestCase):
     def create_app(self):
         app = Flask(__name__)
         app.config['TESTING'] = True
-        app.config['WTF_CSRF_ENABLED'] = False
         return app
 
     def setUp(self):
-        app = self.create_app()
         # creates a test client
         self.app = app.test_client()
         # propagate the exceptions to the test client
         self.app.testing = True
-
 
     def test_index_get(self):
         response = self.app.get('/')
@@ -103,7 +100,7 @@ class url_shortener_cache_Test(TestCase):
         root = ET.fromstring(response.get_data().decode("utf-8").replace("<!DOCTYPE html>",""))
 
         csrf = root.find(".//*input[@name='_csrf_token']").attrib['value']
-        csrf = 'flask-session-insecure-secret-key'
+
         response = self.app.post('/', data={'url': 'http://example.com/',
                                             '_csrf_token': csrf})
         self.assertEqual(response.status_code, 200)
