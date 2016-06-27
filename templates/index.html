@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}"/>
+    <title>URL shortener</title>
+  </head>
+  <body>
+    <!-- Здесь выводите сообщение об ошибке или короткий URL. -->
+    {% if error_message %}
+    <h2>Provided scheme {{schema|upper}} is not supported.</h2>
+    </p>
+      {{error_message}}<br>
+      <code>
+        Please use one from the following list:<br>
+        <ul>
+        {% for item in allowed_schemes %}
+          <li>{{ item }}</li>
+        {% endfor %}
+        </ul>
+      </code>
+    </p>
+    {% elif url %}
+        <h3>Your shortcut link is: <a href={{url}}>{{url}}</a></h3>
+    {% endif %}
+    <form action="" method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+      <!-- Добавьте поле для URL и кнопку для отправки формы. -->
+        <input type="text" name="url"/>
+        <input type="submit"/>
+    </form>
+  </body>
+</html>
