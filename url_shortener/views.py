@@ -17,7 +17,7 @@ def random_key():
 def index():
     form = URLForm()
     if request.method == 'GET':
-        form.process(MultiDict())
+        # form.process(MultiDict())
         return render_template('index.html', form=form)
     if request.method == 'POST':
         frm = urlparse(request.form['url'])
@@ -30,7 +30,6 @@ def index():
             ctx['url'] = key
         else:
             ctx['error_message'] = "Supported schemes are: " + ", ".join(ALLOWED_SCHEMES)
-        form.process(MultiDict())
         return render_template('index.html', **ctx, form=form)
     else:
         return abort(400)

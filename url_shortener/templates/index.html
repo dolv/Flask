@@ -1,32 +1,51 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}"/>
-    <title>URL shortener</title>
-  </head>
-  <body>
-    <!-- Здесь выводите сообщение об ошибке или короткий URL. -->
+{% extends "base.html" %}
+{% block header%}
+<a href='/'><button type="button" class="btn btn-default">Home Page</button></a>
+{% endblock %}
+{% block body %}
+<!-- Здесь выводите сообщение об ошибке или короткий URL. -->
     {% if error_message %}
-    <h2>Provided scheme {{schema|upper}} is not supported.</h2>
-    </p>
+    <h2 class="bg-danger">Provided scheme {{schema|upper}} is not supported.</h2>
+    <p >
       {{error_message}}<br/>
-      <code>
+      <samp>
         Please use one from the following list:<br/>
         <ul>
         {% for item in allowed_schemes %}
           <li>{{ item }}</li>
         {% endfor %}
         </ul>
-      </code>
+      </samp>
     </p>
     {% elif url %}
         <h3>Your shortcut link is: <a href={{url}}>{{url}}</a></h3>
     {% endif %}
-    <form action="" method="post" name="URLForm">
+    <form class="form-inline" action="" method="post" name="URLForm">
         {{ form.hidden_tag() }}
       <!-- Добавьте поле для URL и кнопку для отправки формы. -->
-        <label>URL: </label>{{ form.url }}
-        <input type="submit"/>
+      <div class="form-group">
+      {% if error_message %}
+      <div class="has-error has-feedback bg-danger">
+        <label for="{{ form.url.id }}">URL: </label>
+        <input type="text" class="form-control" id="{{ form.url.id }}" placeholder="{{ form.url.data if form.url.data else 'Link' }}" name="{{ form.url.name }}" aria-describedby="inputError2Status">
+        <span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span>
+        <span id="inputError2Status" class="sr-only">(error)</span>
+      </div>
+      {% elif form.url.data %}
+      <div class="form-group has-success has-feedback">
+        <label class="control-label sr-only" for="{{ form.url.id }}">URL:</label>
+        <div class="input-group">
+            <span class="input-group-addon">Href</span>
+            <input type="text" class="form-control" id="{{ form.url.id }}" placeholder="{{ form.url.data }}" aria-describedby="inputGroupSuccess4Status">
+        </div>
+        <span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span>
+        <span id="inputGroupSuccess4Status" class="sr-only">(success)</span>
+      </div>
+      {% else %}
+        <label for="{{ form.url.id }}">URL: </label>
+        <input type="text" class="form-control" id="{{ form.url.id }}" placeholder="{{ form.url.data}}" name="{{ form.url.name }}" >
+      {% endif %} 
+        <input class="btn btn-default" type="submit"/>
+      </div>     
     </form>
-  </body>
-</html>
+{% endblock %}
