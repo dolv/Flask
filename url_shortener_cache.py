@@ -18,13 +18,9 @@ app.config.from_object(__name__)
 
 # Load default config and override config from an environment variable
 app.config.update(
-    DATABASE=os.path.join(app.root_path, 'flaskr.db'),
     SECRET_KEY='development key',
-    USERNAME='admin',
-    PASSWORD='default',
     DEBUG=True
 )
-app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 
 ALLOWED_SCHEMES = {'http', 'https', 'ftp'}
 
@@ -78,7 +74,11 @@ from flask_testing.utils import TestCase
 class url_shortener_cache_Test(TestCase):
     def create_app(self):
         app = Flask(__name__)
-        app.config['TESTING'] = True
+        app.config.update(
+            TESTING=True,
+            SECRET_KEY='development key',
+            DEBUG=True
+        )
         return app
 
     def setUp(self):
@@ -135,7 +135,6 @@ class url_shortener_cache_Test(TestCase):
     def test_redirect(self):
         response = self.app.get('/randomnonsense/')
         self.assertRedirects(response, '/')
-
 
 if __name__ == "__main__":
     app.run()
