@@ -1,16 +1,14 @@
 from __init__ import app
-import unittest
 from flask_testing import TestCase
 class url_shortener_cache_Test(TestCase):
     def create_app(self):
         app.config.from_object('settings_for_testing')
-        app.config['TESTING'] = True
-        import views
         return app
 
     def setUp(self):
         # creates a test client
         self.app = app.test_client()
+        self.app.testing = True
 
 
     def test_index_get(self):
@@ -42,14 +40,15 @@ class url_shortener_cache_Test(TestCase):
         self.assertEqual(response.status_code, 200)
 
         response = self.app.post('/',
-                                 data={'url': 'http://example.com/'},
-                                 follow_redirects=True)
-
+                                 data=dict(
+                                     url='http://example.com/',
+                                     follow_redirects=True)
+                                 )
         self.assertEqual(response.status_code, 200)
 
+
         response = self.app.post('/',
-                                 data={'url': 'mailto:admin@google.com'},
-                                 follow_redirects=True)
+                                 data={'url': 'mailto:admin@google.com'})
         self.assertEqual(response.status_code, 200)
         #self.assertContains(response, 'http')
         assert b'http' in response.data
